@@ -1,0 +1,65 @@
+<!DOCTYPE html> 
+<html> 
+	<head> 
+	<title>Page Title</title> 
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
+	<script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js"></script>
+	<style type="text/css">
+		.slide.in {
+			-webkit-tranform: translateX(0);
+			-webkit-animation-name: slideinfromright;
+		}
+		@-webkit-keyframes slideinfromright {
+			from { -webkit-transform: translateX(100%); }
+			to { -webkit-transform: translateX(0); }
+		}
+		.slide.out {
+			-webkit-translateX(-100%);
+			-webkit-animation-name: slideouttoleft;
+		}
+		@-webkit-keyframes slideouttoleft {
+			from { -webkit-transform: translateX(0); }
+			to { -webkit-transform: translateX(-100%); }
+		}
+		
+		.in, .out {
+			-webkit-animation-timing-function: ease-in-out;
+			-webkit-animation-duration: 1000ms;
+		}
+	</style>
+	<script>
+		function myTransitionHandler(name, reverse, $to, $from) {
+			var deferred = new $.Deferred();
+			// perform any actions or set-up necessary to kick-off
+			// whenever the transition completes, your code calls.
+			// deferred.resolve(name, reverse, $to, $from);
+			return deferred.promise();
+		}
+		
+		$.mobile.transitionHandler['slide'] = myTransitionHandler;
+	</script>
+</head> 
+
+<body> 
+<div data-role="page" data-title="Page1" id="page1">
+	<div data-role="header"></div>
+	<div data-role="content">
+		<p><a href="#page2" data-rel="dialog" data-transition="slide">페이지2 로</a></p>
+	</div>
+	<div data-role="footer">
+		
+	</div>
+</div>
+<div data-role="page" data-title="Page2" id="page2">
+	<div data-role="header"></div>
+	<div data-role="content">
+		<p><a href="#page1" data-transition="slide">뒤로</a></p>
+	</div>
+	<div data-role="footer"></div>
+</div>
+</body>
+</html>
