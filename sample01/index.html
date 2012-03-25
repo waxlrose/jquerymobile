@@ -36,14 +36,14 @@
 			var deferred = new $.Deferred();
 			// perform any actions or set-up necessary to kick-off
 			// whenever the transition completes, your code calls.
-			// deferred.resolve(name, reverse, $to, $from);
+			deferred.resolve(name, reverse, $to, $from);
 			
 			console.log('---');
 			
 			return deferred.promise();
 		}
 		
-		$.mobile.transitionHandler['slide'] = myTransitionHandler;
+		$.mobile.transitionHandlers['slide'] = myTransitionHandler;
 	</script>
 </head> 
 
