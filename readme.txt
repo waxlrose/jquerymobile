@@ -12,7 +12,17 @@
 
 <body> 
 
-...content goes here...
+<section data-role="page" id="page1">
+	<header data-role="header">
+		<h1>Title</h1>
+	</header>
+	<article data-role="content">
+	
+	</article>
+	<footer data-role="footer">
+		<h4>Footer</h4>
+	</footer>
+</section>
 
 </body>
 </html>

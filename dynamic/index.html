@@ -1,0 +1,140 @@
+<!DOCTYPE html> 
+<html> 
+	<head> 
+	<title>Page Title</title> 
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
+	<script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js"></script>
+	
+	<script>
+		var categoryData = {
+			animals: {
+				name: 'Animals',
+				description: 'All your favorites from aardvarks to zebras.',
+				items: [
+					{
+						name: 'Pets'
+					},
+					{
+						name: 'Farm Animals'
+					},
+					{
+						name: 'Wild Animals'
+					}
+				]
+			},
+			colors: {
+				name: 'Colors',
+				description: 'Fresh colors from the magic rainbow',
+				items: [
+					{
+						name: 'Red'
+					},
+					{
+						name: 'Green'
+					},
+					{
+						name: 'Blue'
+					},
+					{
+						name: 'Orange'
+					},
+					{
+						name: 'Purple'
+					},
+					{
+						name: 'Violet'
+					}				
+				]
+			},
+			vehicles: {
+				name: 'Vehicles',
+				description: 'Everything from cars to planes',
+				items: [
+					{
+						name: 'Cars',
+					},
+					{
+						name: 'Planes'
+					},
+					{
+						name: 'Construction'
+					}
+				]
+			}
+		};
+		
+		function showCategory(urlObj, options) {
+			var categoryName = urlObj.hash.replace(/.*category=/, ""),
+				category = categoryData[categoryName],
+				pageSelector = urlObj.hash.replace(/\?.*$/, "");
+
+			if (category) {
+				var $page = $(pageSelector),
+					$header = $page.children(":jqmData(role=header)"),
+					$content = $page.children(":jqmData(role=content)"),
+					$footer = $page.children(":jqmData(role=footer)"),
+					markup = "<p>" + category.description + "</p><ul data-role='listview' data-inset='true'>",
+					citems = category.items,
+					numItems = citems.length;
+					
+				for(var i=-1, item; item=citems[++i]; ) {
+					markup += "<li>" + item.name + "</li>";
+				}
+				markup += "</ul>";
+				
+				$header.find('h1').html(category.name);
+				$content.html(markup);
+				$page.page(); // ??
+				$content.find(':jqmData(role=listview)').listview();
+				
+				options.dataUrl = urlObj.href;
+				
+				$.mobile.changePage($page, options);
+			}
+		}
+		
+		$(document).bind('pagebeforechange', function(e, data) {
+			if (typeof data.toPage == 'string') {
+				var u = $.mobile.path.parseUrl(data.toPage),
+					re = /^#category-item/;
+				if(u.hash.search(re) !== -1) {
+					showCategory(u, data.options);
+					
+					e.preventDefault();
+				}
+			}
+		});
+	</script>
+</head> 
+
+<body> 
+
+<section data-role="page" id="home">
+	<header data-role="header">
+		<h1>Title</h1>
+	</header>
+	<article data-role="content">
+		<h2>Select a Category Below</h2>
+		<ul data-role="listview" data-inset="true">
+			<li><a href="#category-items?category=animals">Animals</a></li>
+			<li><a href="#category-items?category=colors">Colors</a></li>
+			<li><a href="#category-items?category=vehicles">Behicles</a></li>
+		</ul>
+	</article>
+	<footer data-role="footer">
+		<h4>Footer</h4>
+	</footer>
+</section>
+
+<section data-role="page" id="category-items">
+	<header data-role="header"><h1></h1></header>
+	<article data-role="content"></article>
+	<footer data-role="footer"><h4><a href="#home" data-role="back" data-theme="b">Back</a></h4></footer>
+</section>
+
+</body>
+</html>
