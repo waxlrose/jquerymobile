@@ -1,0 +1,98 @@
+<!DOCTYPE html> 
+<html> 
+	<head> 
+	<title>Page Title</title> 
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
+	<script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js"></script>
+	<script>
+	(function(){
+		var methods = {
+			init: function (options) {
+				var settings = {
+					callback: function(){}
+				};
+				if (options) {
+					$.extend(settings, options);
+				}
+				
+				$(":jqmData(role='page')").each(function(){
+					$(this).bind('swipeleft', function(){
+						// 현재 페이지의 id에서 페이지번호를 알아낸 다음 1를 더합니다.
+						var nextPage = parseInt($(this).attr('id').split("page")[1]) + 1;
+						if (nextPage === 4) {
+							nextPage = 1;
+						}
+						$.mobile.changePage("#page" + nextPage, "slide");
+					});
+					$(this).bind('swiperight', function(){
+						var prevPage = parseInt($(this).attr('id').split("page")[1]) - 1;
+						if (prevPage === 0) {
+							prevPage = 3;
+						}
+						$.mobile.changePage("#page" + prevPage, "slide", true);
+					})
+				});
+			}
+		};
+		
+		$.fn.initApp = function(method) {
+			if (methods[method]) {
+				return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
+			} else if (typeof method == 'object' || !method) {
+				return methods.init.apply(this, arguments);
+			} else {
+				$.error('Method ' + method + 'does not exist');
+			}
+		}
+	})();
+	
+	$(function(){
+		$().initApp();
+	})
+	</script>
+</head> 
+
+<body> 
+
+<section data-role="page" id="page1">
+	<header data-role="header">
+		<h1>Title</h1>
+	</header>
+	<article data-role="content">
+		<p>First page!</p>
+	</article>
+	<footer data-role="footer">
+		<h4>Footer</h4>
+	</footer>
+</section>
+
+<section data-role="page" id="page2">
+	<header data-role="header">
+		<h1>Title</h1>
+	</header>
+	<article data-role="content">
+		<p>Second page!</p>
+	</article>
+	<footer data-role="footer">
+		<h4>Footer</h4>
+	</footer>
+</section>
+
+<section data-role="page" id="page3">
+	<header data-role="header">
+		<h1>Title</h1>
+	</header>
+	<article data-role="content">
+		<p>Third page!</p>
+	</article>
+	<footer data-role="footer">
+		<h4>Footer</h4>
+	</footer>
+</section>
+
+</body>
+</html>
