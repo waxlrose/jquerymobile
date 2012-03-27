@@ -1,0 +1,58 @@
+<!DOCTYPE html> 
+<html> 
+	<head> 
+	<title>Page Title</title> 
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
+	<script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js"></script>
+</head> 
+
+<body> 
+
+<section data-role="page" id="page1">
+	<header data-role="header">
+		<h1>Title</h1>
+	</header>
+	<article data-role="content">
+		<h3>Checkboxes </h3>
+		<form id="myform" action="formprocessor.php" method="post">
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<lengend>Filter restraurant by:</lengend>
+					<input type="checkbox" name="checkbox-french" id="checkbox-french"><label for="checkbox-french">French</label>
+					<input type="checkbox" name="checkbox-italian" id="checkbox-italian"><label for="checkbox-italian">Italian</label>
+					<input type="checkbox" name="checkbox-greek" id="checkbox-greek"><label for="checkbox-greek">Greek</label>
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup" data-type="horizontal">
+					<legend>Select a Language:</legend>
+					<input type="radio" name="radio-language" id="radio_french"><label for="radio_french">French</label>
+					<input type="radio" name="radio-language" id="radio_italian" checked="checked"><label for="radio_italian">Italian</label>
+					<input type="radio" name="radio-language" id="radio_greek"><label for="radio_greek">Greek</label>
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup" data-type="horizontal">
+					<legend for="slider-music">Ambient Music:</legend>
+					<select name="slider-music" id="slider-music" data-role="slider">
+						<option value="on">On</option>
+						<option value="off">Off</option>
+					</select>
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<input type="range" id="slider" name="slider" min="0" max="500">
+			</div>
+		</form>
+	</article>
+	<footer data-role="footer">
+		<h4>Footer</h4>
+	</footer>
+</section>
+
+</body>
+</html>

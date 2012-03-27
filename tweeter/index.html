@@ -1,0 +1,200 @@
+<!DOCTYPE html> 
+<html> 
+	<head> 
+	<title>Page Title</title> 
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
+	<script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js"></script>
+	
+	<script>
+	(function(){
+		var LIST 		= '#pageTweetList';
+		var SETTINGS 	= '#pageSettings';
+		var DETAIL 		= '#pageTweetDetail';
+		var ERROR		= '#errorPage';
+		
+		var updateTweeterFeed = function(){
+			
+			$.mobile.showPageLoadingMsg(); 
+			
+			// 작업할 페이지와 목록
+			var $page = $(LIST),
+				strUrl = "http://search.twitter.com/search.json?callback=?&rpp=" + $page.data("rpp") + "&q=from:" + $page.data("tweeterUser");
+								
+			$.ajax({
+				url: strUrl,
+				dataType: 'json',
+				success: function(data) {
+					$page.find(".content").empty().html('<ul></ul>');
+					
+					if (data.results.length === 0) {
+						var html = ([
+							'<h3>No tweets Found</h3>',
+							'<p>No tweets found for the twitter user name ',
+							$page.data("tweeterUser"),
+							'.</p>'
+						]).join('');
+						$('#pageError .content').html(html);
+						$('#show-error-page').click();
+						
+						$page.find('.content').html('<h3>No Tweets Found</h3>');
+						
+						$.mobile.hidePageLoadingMsg();
+						return;
+					}
+					
+					var $list = $page.find(".content ul");					
+					for(var i=-1, item; item=data.results[++i]; i++) {
+						var html = [
+							'<li><a href="' + DETAIL + '">',
+								'<img src="' + item.profile_image_url + '">',
+								item.text,
+								'</a>',
+							'</li>'+"\n"
+						];
+						var tweet = $(html.join(''));
+						$list.append(tweet);
+						
+						$list.find('a:last').data('tweetJSON', JSON.stringify(item));
+					}
+					
+					$.mobile.hidePageLoadingMsg();  
+					
+					$list.listview();					
+					$list.find('a').click(function(){
+						var $this = $(this);
+						$(DETAIL).data('tweetJSON', $this.data("tweetJSON"));
+					});
+				},
+				error: function(){
+					var $page = $('#pageError .content');
+					var html = '<h3>Update failed</h3><p>We were unable to update the twitter feed. Please try again.</p>';
+					
+					$page.html(html);
+					$('#show-error-page').click();
+				}
+			});
+		};
+		
+		var methods = {
+			initMainPage: function(){
+				var $page = $(LIST);
+				
+				$page.data({'rpp': 20, 'tweeterUser': 'jreid01', 'boolUpdate': false});
+				updateTweeterFeed();
+				
+				$page.bind('pageshow', function(event, ui){
+					if ($page.data('boolUpdate')) {
+						updateTweeterFeed();
+						$page.data('boolUpdate', false);
+					}
+				})
+			},
+			initDetailPage: function(){
+				var $page = $(DETAIL);
+				$page.bind('pageshow', function(event, ui){
+					var objTweet = JSON.parse($page.data('tweetJSON'));
+					var html = '<p><img src="' + objTweet.profile_image_url + '">' + objTweet.text + '</p>';
+					$page.find('.container-tweet').html(html);
+				})
+			},
+			initSettingsPage: function(){
+				var $page = $(SETTINGS),
+					$datapage = $(LIST);
+					
+				$page.find('#username').change(function(){
+					var newVal = $(this).val();
+					$datapage.data({'tweeterUser': newVal, 'boolUpdate': true});
+				});
+				
+				// change 이벤트가 아직 미지원
+				$page.bind('pagebeforehide', function(event, ui){
+					var sliderValue = $page.find('#slider').val();
+					if (parseInt(sliderValue, 10) != parseInt($datapage.data('rpp'), 10)) {
+						$datapage.data({'rpp': sliderValue, "boolUpdate": true});
+					}
+				}).bind('pageshow', function(event, ui){
+					$page.find('#slider').val($datapage.data('rpp')).slider('refresh');
+					$page.find('#username').val($datapage.data('tweeterUser'));
+				})
+			},
+			initAll:function(){
+				$().initApp('initMainPage');
+				$().initApp('initDetailPage');
+				$().initApp('initSettingsPage');
+			}
+		};
+		
+		$.fn.initApp = function(method){
+			if (methods[method]) {
+				return methods[method].apply(this, [].slice.call(arguments, 1));
+			} else if (typeof method == 'object' || !method) {
+				return methods.initAll.apply(this, arguments);
+			} else {
+				$.error('Method ' + method + ' does not exist');
+			}
+		};
+		
+		$(function(){
+			$().initApp();
+		});
+	})(); 
+	</script>
+</head> 
+
+<body> 
+
+<section data-role="page" id="pageTweetList">
+	<header data-role="header" data-position="fixed">
+		<h1>Tweeter</h1>
+		<a href="#pageSettings" data-transition="flip" data-role="button" data-icon="gear" data-iconpos="notext" class="ui-btn-right">Options</a>
+	</header>
+	<article data-role="content" class="content">
+		<ul data-role="listview">
+
+		</ul>
+	</article>
+	<footer data-role="footer">
+		<h4>Footer</h4>
+	</footer>
+</section>
+
+<section data-role="page" id="pageSettings">
+	<header data-role="header"><h1>Tweet Settings</h1></header>
+	<article class="content" data-role="content">
+		<h3>Settings</h3>
+		<div data-role="fieldcontain">
+			<label for="username">Tweeter User Name:</label>
+			<input type="text" id="username" value="">
+		</div>
+		<div data-role="fieldcontain">
+			<label for="slider">Number of tweets to display:</label>
+			<input type="range" id="slider" name="slider" min="5" max="50" value="">
+		</div>
+	</article>
+</section>
+
+<section data-role="page" id="pageTweetDetail">
+	<header data-role="header"><h1>Tweet Detail</h1></header>
+	<article data-role="content" class="content">
+		<div class="container-tweet">
+			<p></p>
+		</div>
+	</article>
+</section>
+
+<section data-role="page" id="pageError" data-theme="e">
+	<header data-role="header"><h1>Tweet Error</h1></header>
+	<article data-role="content" class="content">
+		<div class="container-tweet">
+			<p>Tweet!</p>
+		</div>
+	</article>
+</section>
+
+<a href="#pageError" id="show-error-page" data-role="button" data-rel="dialog" data-transition="pop" style="display:none">Show error page</a>
+</body>
+</html>
